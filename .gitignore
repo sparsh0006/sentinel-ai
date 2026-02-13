@@ -1,0 +1,162 @@
+# ==============================
+.env
+.env.*
+!.env.example
+
+# Logs
+
+logs/
+*.log
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Archives
+
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# ==============================
+
+# FRONTEND (Next.js)
+
+# ==============================
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+frontend/.cache/
+frontend/.turbo/
+
+# Next build cache
+
+frontend/.next/cache/
+
+# TypeScript
+
+frontend/*.tsbuildinfo
+
+# ==============================
+
+# BACKEND (Node / Express)
+
+# ==============================
+
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/.cache/
+
+# TypeScript
+
+backend/*.tsbuildinfo
+
+# ==============================
+
+# GLOBAL NODE MODULES
+
+# ==============================
+
+node_modules/
+
+# ==============================
+
+# N8N (LOCAL INSTANCE)
+
+# ==============================
+
+.n8n/
+.n8n/database.sqlite
+.n8n/config
+.n8n/*.log
+
+# ==============================
+
+# DATABASE FILES
+
+# ==============================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ==============================
+
+# MCP / AI ARTIFACTS
+
+# ==============================
+
+*.prompt
+*.cache
+*.embeddings
+*.vectorstore
+*.model
+*.weights
+
+# ==============================
+
+# DOCKER
+
+# ==============================
+
+docker-compose.override.yml
+docker-data/
+
+# ==============================
+
+# IDE / EDITOR
+
+# ==============================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+
+# SECRETS / KEYS
+
+# ==============================
+
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.env.local
+
+# ==============================
+
+# TEMP FILES
+
+# ==============================
+
+tmp/
+temp/
+*.tmp
+
+# ==============================
+
+# COVERAGE / TEST
+
+# ==============================
+
+coverage/
+.nyc_output/
+
+# ==============================
+
+# OPTIONAL: LOCAL CONFIG FILES
+
+# ==============================
+
+# Ignore local-only configs if you create them
+
+backend/src/config/*.local.ts
+frontend/.env.local
