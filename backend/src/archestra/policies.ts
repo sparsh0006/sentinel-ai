@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// ARCHESTRA LOCAL POLICY DEFINITIONS
-// Defines policy rules that mirror Archestra governance.
-// Used as local fallback when Archestra platform is unavailable.
-// ═══════════════════════════════════════════════════════════════
-
 export interface PolicyRule {
   id: string;
   toolId: string;

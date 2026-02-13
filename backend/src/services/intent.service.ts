@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// PHASE 3 — INTENT PARSING SERVICE
-// Uses LLM to extract structured intent from natural language.
-// Output: trigger, conditions, actions, parameters
-// ═══════════════════════════════════════════════════════════════
-
 import OpenAI from "openai";
 import { config } from "../config/default";
 import { MCPRegistry } from "../mcp/registry";

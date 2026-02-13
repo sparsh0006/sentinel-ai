@@ -1,8 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// WORKFLOW ROUTES
-// REST API for the orchestration pipeline
-// ═══════════════════════════════════════════════════════════════
-
 import { Router, Request, Response, NextFunction } from "express";
 import {
   runPipeline,

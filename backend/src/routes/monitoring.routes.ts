@@ -1,8 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// MONITORING ROUTES (PHASE 9)
-// Endpoints for execution monitoring and health dashboards
-// ═══════════════════════════════════════════════════════════════
-
 import { Router, Request, Response, NextFunction } from "express";
 import { N8NClient } from "../n8n/client";
 

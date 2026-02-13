@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// MCP TOOL EXECUTOR
-// Executes MCP tool calls after Archestra policy validation.
-// Each call: AI → Archestra → Tool → Response
-// ═══════════════════════════════════════════════════════════════
-
 import { MCPRegistry } from "./registry";
 import { ArchestraClient } from "../archestra/client";
 import { N8NClient } from "../n8n/client";

@@ -1,10 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// PHASE 4 — BLUEPRINT GENERATION SERVICE
-// Converts parsed intent into:
-//   1. A structured workflow blueprint
-//   2. Valid n8n workflow JSON ready for deployment
-// ═══════════════════════════════════════════════════════════════
-
 import { ParsedIntent } from "./intent.service";
 import { v4 as uuid } from "uuid";
 import { logger } from "../utils/logger";

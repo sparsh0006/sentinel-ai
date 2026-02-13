@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// ORCHESTRATOR SERVICE — THE 10-PHASE PIPELINE
-// Coordinates the full User → AI → Blueprint → Archestra →
-// n8n → Execution → Monitoring lifecycle.
-// ═══════════════════════════════════════════════════════════════
-
 import { parseIntent, ParsedIntent } from "./intent.service";
 import { generateBlueprint, WorkflowBlueprint } from "./blueprint.service";
 import { MCPExecutor, ToolCallResult } from "../mcp/executor";

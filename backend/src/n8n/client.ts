@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// PHASE 7 — n8n CLIENT
-// Communicates with n8n REST API for workflow management.
-// Handles create, activate, deactivate, get executions.
-// ═══════════════════════════════════════════════════════════════
-
 import axios, { AxiosInstance } from "axios";
 import { config } from "../config/default";
 import { logger } from "../utils/logger";

@@ -1,9 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// PHASE 5 — ARCHESTRA CLIENT
-// Interfaces with Archestra Platform API for policy evaluation,
-// tool governance, and audit logging.
-// ═══════════════════════════════════════════════════════════════
-
 import axios, { AxiosInstance } from "axios";
 import { config } from "../config/default";
 import { logger } from "../utils/logger";
