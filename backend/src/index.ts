@@ -1,7 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// AI AUTOMATION ARCHITECT — EXPRESS SERVER
-// ═══════════════════════════════════════════════════════════════
-
 import express from "express";
 import cors from "cors";
 import { config } from "./config/default";
@@ -9,7 +5,6 @@ import { errorHandler } from "./middleware/errorHandler";
 import { logger } from "./utils/logger";
 import workflowRoutes from "./routes/workflow.routes";
 import monitoringRoutes from "./routes/monitoring.routes";
-import { MCPRegistry } from "./mcp/registry";
 
 const app = express();
 
@@ -26,7 +21,7 @@ app.get("/", (_req, res) => {
   res.json({
     service: "AI Automation Architect",
     version: "1.0.0",
-    tools: MCPRegistry.getAllTools().length,
+    status: "Governed via Archestra",
     endpoints: [
       "POST /api/workflows          — Run pipeline from prompt",
       "GET  /api/workflows           — List all pipelines",
@@ -47,8 +42,7 @@ app.use(errorHandler);
 // ── Start ─────────────────────────────────────────────────────
 app.listen(config.port, () => {
   logger.info(`🏗  AI Automation Architect running on http://localhost:${config.port}`);
-  logger.info(`📦 ${MCPRegistry.getAllTools().length} MCP tools registered`);
-  logger.info(`🔗 Archestra: ${config.archestra.apiUrl}`);
+  logger.info(`🔗 Archestra Gateway: ${process.env.ARCHESTRA_GATEWAY_URL}`);
   logger.info(`🔗 n8n: ${config.n8n.host}`);
 });
 

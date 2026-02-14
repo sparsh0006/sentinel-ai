@@ -50,7 +50,7 @@ class N8NService {
    */
   async activateWorkflow(id: string): Promise<{ id: string; active: boolean }> {
     try {
-      const response = await this.http.patch(`/api/v1/workflows/${id}`, {
+      const response = await this.http.post(`/api/v1/workflows/${id}/activate`, {
         active: true,
       });
 

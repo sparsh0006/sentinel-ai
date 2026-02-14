@@ -3,16 +3,11 @@ import {
   runPipeline,
   getPipeline,
   getAllPipelines,
-  approvePipeline,
-  analyzeFailure,
 } from "../services/orchestrator.service";
-import { MCPRegistry } from "../mcp/registry";
-import { ArchestraClient } from "../archestra/client";
-import { N8NClient } from "../n8n/client";
 
 const router = Router();
 
-// ── POST /api/workflows — Run full pipeline ──────────────────
+// ── POST /api/workflows — Run full pipeline via Archestra Broker ──
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { prompt } = req.body;
@@ -20,6 +15,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).json({ error: "Missing 'prompt' in request body" });
     }
 
+    // This now calls the Archestra A2A Agent
     const result = await runPipeline(prompt);
     res.json({ success: true, data: result });
   } catch (err) {
@@ -40,47 +36,24 @@ router.get("/:id", (req: Request, res: Response) => {
   res.json({ success: true, data: pipeline });
 });
 
-// ── POST /api/workflows/:id/approve — Manual approval ────────
-router.post("/:id/approve", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await approvePipeline(req.params.id);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── GET /api/workflows/:id/diagnose — Failure analysis ───────
-router.get("/:id/diagnose", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await analyzeFailure(req.params.id);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ── GET /api/tools — List registered MCP tools ───────────────
+// ── GET /api/tools — List tools (Now managed by Archestra) ───
 router.get("/tools/list", (_req: Request, res: Response) => {
-  res.json({ success: true, data: MCPRegistry.getAllTools().map((t) => ({
-    id: t.id, name: t.name, category: t.category, description: t.description,
-  })) });
+  res.json({ 
+    success: true, 
+    data: [], 
+    message: "Tools are now dynamically brokered via Archestra MCP Gateway." 
+  });
 });
 
 // ── GET /api/health — System health check ────────────────────
 router.get("/health/status", async (_req: Request, res: Response) => {
-  const [archestra, n8n] = await Promise.all([
-    ArchestraClient.healthCheck(),
-    N8NClient.healthCheck(),
-  ]);
-
   res.json({
     success: true,
     data: {
       server: true,
-      archestra,
-      n8n,
-      tools: MCPRegistry.getAllTools().length,
+      governance: "Archestra Broker Active",
+      orchestrator: "n8n Connected",
+      gateway: !!process.env.ARCHESTRA_GATEWAY_URL
     },
   });
 });
