@@ -1,143 +1,163 @@
-# 🏗 AI Automation Architect
+# 🏗️ Sentinel-AI: Governed Automation Architect
 
-> Convert natural language instructions into governed, deployed, and monitored n8n workflows using MCP tools and Archestra policy engine.
+Convert natural language instructions into secure, governed, and deployed **n8n workflows** using Archestra's Policy Engine and the Model Context Protocol (MCP).
 
-## Architecture Overview
+---
+
+## 🛡️ Role of Archestra
+
+Archestra serves as the **Deterministic Governance Layer** and **High-Performance Gateway**. Instead of allowing the AI to call APIs directly, all actions are brokered through Archestra to ensure enterprise-grade safety.
+
+- **Policy Engine** — Enforces strict rules on tool arguments (e.g., blocking forbidden email domains or restricted Slack channels) before the AI can execute them.
+- **MCP Tool Broker** — Centralizes access to the `n8n-mcp` server, allowing the AI to research node schemas, validate JSON, and deploy workflows through a single secure endpoint.
+- **Agent-to-Agent (A2A) Orchestration** — The Express backend uses Archestra's A2A protocol to trigger a specialized "Sentinel Agent," keeping the complex reasoning inside a governed sandbox.
+- **Zero-Trust Credential Isolation** — The AI remains the "Architect" but never the "Keyholder." Credentials stay in n8n/Vaults, while Archestra manages the authorized tool calls.
+- **Security Audit Trail** — Provides a permanent, immutable log of every tool call attempted by the AI, including blocked requests and policy violations.
+
+---
+
+## 🏗️ Architecture Overview
 
 ```
-User → Next.js Frontend → Express Backend → AI Engine
-                                              ├── Intent Parser (LLM)
-                                              ├── Blueprint Generator
-                                              ├── Archestra Policy Engine (MCP Gateway)
-                                              ├── n8n MCP Tools (Workflow CRUD)
-                                              └── Monitoring & Logging
+User → Next.js Frontend → Express Backend (Broker)
+                                |
+                                ↓
+                        Archestra Platform (Governance)
+                          ├── Policy Engine (Safety Shield)
+                          ├── Sentinel Agent (Brain)
+                          └── MCP Gateway (The Bridge)
+                                |
+                                ↓
+                        n8n Workflow Engine (Execution)
 ```
 
-## Folder Structure
+---
 
-```
-ai-automation-architect/
-├── frontend/                     # Next.js 14 App
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx              # Landing / prompt input
-│   │   ├── dashboard/page.tsx    # Main dashboard
-│   │   ├── workflows/page.tsx    # Workflow list & details
-│   │   ├── monitoring/page.tsx   # Execution monitoring
-│   │   └── api/                  # Next.js API routes (proxy)
-│   │       └── chat/route.ts
-│   ├── components/
-│   │   ├── ui/                   # Reusable UI primitives
-│   │   │   └── Button.tsx
-│   │   ├── layout/
-│   │   │   └── Sidebar.tsx
-│   │   ├── workflow/
-│   │   │   ├── PromptInput.tsx
-│   │   │   ├── BlueprintView.tsx
-│   │   │   └── PolicyBadge.tsx
-│   │   └── monitoring/
-│   │       └── ExecutionLog.tsx
-│   ├── lib/
-│   │   └── api.ts                # Backend API client
-│   ├── hooks/
-│   │   └── useWorkflow.ts
-│   ├── types/
-│   │   └── index.ts
-│   ├── styles/
-│   │   └── globals.css
-│   ├── tailwind.config.ts
-│   ├── next.config.js
-│   ├── tsconfig.json
-│   └── package.json
-│
-├── backend/                      # Express + Node.js Server
-│   ├── src/
-│   │   ├── index.ts              # Server entry
-│   │   ├── routes/
-│   │   │   ├── workflow.routes.ts
-│   │   │   └── monitoring.routes.ts
-│   │   ├── services/
-│   │   │   ├── intent.service.ts     # LLM intent parsing
-│   │   │   ├── blueprint.service.ts  # Workflow blueprint gen
-│   │   │   └── orchestrator.service.ts # Main pipeline
-│   │   ├── mcp/
-│   │   │   ├── registry.ts           # MCP tool registry
-│   │   │   └── executor.ts           # MCP tool executor
-│   │   ├── archestra/
-│   │   │   ├── client.ts             # Archestra API client
-│   │   │   └── policies.ts           # Policy definitions
-│   │   ├── n8n/
-│   │   │   └── client.ts             # n8n API client
-│   │   ├── middleware/
-│   │   │   └── errorHandler.ts
-│   │   └── utils/
-│   │       └── logger.ts
-│   ├── config/
-│   │   └── default.ts
-│   ├── tsconfig.json
-│   └── package.json
-│
-├── docker-compose.yml            # Archestra + n8n + Redis
-├── .env.example
-└── README.md
+## 💻 Archestra Integration Snippets
+
+### Governed Tool Brokering (A2A)
+
+The backend delegates the "Architecting" task to an Archestra Agent via the A2A JSON-RPC protocol.
+
+```typescript
+// backend/src/services/orchestrator.service.ts
+const response = await axios.post(
+  `${config.archestra.apiUrl}/v1/a2a/${config.archestra.agentId}`,
+  {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "message/send",
+    params: {
+      message: {
+        parts: [{ kind: "text", text: userPrompt }],
+      },
+    },
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${config.archestra.apiKey}`,
+      Accept: "application/json, text/event-stream",
+    },
+  }
+);
 ```
 
-## Quick Start
+### High-Performance Gateway Communication
+
+The "Broker" tells the Archestra Gateway to execute specific MCP tools only after the Security Engine validates the policy.
+
+```typescript
+// backend/src/mcp/executor.ts
+const response = await axios.post(
+  config.archestra.gatewayUrl,
+  {
+    jsonrpc: "2.0",
+    id: uuid(),
+    method: "tools/call",
+    params: {
+      name: "czlonkowski__n8n-mcp__n8n_create_workflow",
+      arguments: validatedWorkflowJson,
+    },
+  },
+  {
+    headers: { Authorization: `Bearer ${config.archestra.apiKey}` },
+  }
+);
+```
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js >= 18
 - Docker & Docker Compose
-- n8n instance (self-hosted or cloud)
-- OpenAI API key (or Anthropic)
+- OpenAI API Key
 
-### 1. Clone & Install
-
-```bash
-# Clone
-git clone https://github.com/your-repo/ai-automation-architect.git
-cd ai-automation-architect
-
-# Backend
-cd backend
-npm install
-cp .env.example .env   # Fill in your keys
-npm run dev
-
-# Frontend (new terminal)
-cd frontend
-npm install
-npm run dev
-```
-
-### 2. Start Infrastructure
+### 1. Start Infrastructure
 
 ```bash
 # From project root
 docker-compose up -d
 ```
 
-This starts:
-- **Archestra Platform** → `http://localhost:3000` (UI) / `http://localhost:9000` (API)
-- **n8n** → `http://localhost:5678`
-- **Redis** → `localhost:6379`
+### 2. Run the n8n-MCP Bridge (Host Machine)
 
-### 3. Configure
-1. Open Archestra UI at `localhost:3000`, register MCP tools
-2. Open n8n at `localhost:5678`, generate API key
-3. Update `.env` with all credentials
-4. Visit `http://localhost:3001` (frontend)
+```bash
+export N8N_API_URL="http://localhost:5678"
+export N8N_API_KEY="your_n8n_key"
+export MCP_MODE="sse"
+npx -y n8n-mcp
+```
 
-## 10-Phase Workflow
+### 3. Setup Backend & Frontend
 
-| Phase | Description | Component |
-|-------|------------|-----------|
-| 1 | Tool Registration | `mcp/registry.ts` |
-| 2 | User Input | `PromptInput.tsx` |
-| 3 | Intent Parsing | `intent.service.ts` |
-| 4 | Blueprint Generation | `blueprint.service.ts` |
-| 5 | Policy Evaluation | `archestra/policies.ts` |
-| 6 | Approval Flow | `orchestrator.service.ts` |
-| 7 | n8n Deployment | `n8n/client.ts` |
-| 8 | Runtime Execution | n8n webhook runtime |
-| 9 | Monitoring | `monitoring.routes.ts` |
-| 10 | Failure Handling | `orchestrator.service.ts` |# sentinel-ai
+```bash
+# In /backend
+npm install && npm run dev
+
+# In /frontend
+npm install && npm run dev
+```
+
+---
+
+## 🔄 10-Phase Governed Workflow
+
+| Phase | Description              | Component                    |
+| ----- | ------------------------ | ---------------------------- |
+| 1     | Tool Discovery           | Archestra Private Registry   |
+| 2     | Natural Language Input   | `PromptInput.tsx`            |
+| 3     | A2A Handshake            | `orchestrator.service.ts`    |
+| 4     | Governed Reasoning       | Archestra Sentinel Agent     |
+| 5     | Policy Evaluation        | Archestra Security Engine    |
+| 6     | Node Research            | n8n-mcp via Gateway          |
+| 7     | JSON Architecture        | Sentinel Agent Logic         |
+| 8     | Brokered Deployment      | `n8n_create_workflow`        |
+| 9     | Credential Audit         | n8n Safety Gate              |
+| 10    | Audit Logging            | Archestra Event Logs         |
+
+---
+
+## 📂 Folder Structure
+
+```
+ai-automation-architect/
+├── frontend/                     # Next.js 14 Control Plane
+├── backend/                      # Node.js Tool Broker
+│   ├── src/
+│   │   ├── services/
+│   │   │   └── orchestrator.ts   # Main A2A logic
+│   │   ├── mcp/
+│   │   │   └── executor.ts       # Gateway tool caller
+│   │   └── index.ts              # Entry point
+├── docker-compose.yml            # Infra (Archestra, n8n, Redis)
+└── README.md
+```
+
+---
+
+## 📄 License
+
+MIT
